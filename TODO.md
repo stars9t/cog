@@ -1,9 +1,9 @@
-- [-] Add levels for logging
+- [X] Add levels for logging
   - [x] warning log
   - [x] error log
   - [x] debug log
-  - [x] ingo log
-  - [ ] custom levels
+  - [x] info log
+  - [X] custom levels
 - [x] Add logging for files
 - [x] Add logging for terminal (realtime logging)
 

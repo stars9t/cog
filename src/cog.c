@@ -1,15 +1,12 @@
 #include "cog.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
+
+// Length of the string at which the time is written
+#define TIME_CHAR 26
 
 // Standard file for logging 
-static char* log_file = "log.log";
-// Standard time 
-static char* cur_time = "Time is out";
+static const char* log_file = "log.log";
 
-void set_log_file(char *fname) {
+void set_log_file(const char *fname) {
   log_file = fname;
 }
 
@@ -22,50 +19,40 @@ static FILE *open_log_file(void) {
   return fp;
 }
 
-static void get_current_time(void) {
+static void get_current_time(char *t) {
   time_t current_time = time(0);
-  char *current_time_str = ctime(&current_time);
-  current_time_str[strlen(current_time_str)-1] = '\0';
-  cur_time = current_time_str;
+  strcpy(t,ctime(&current_time));
+  t[strlen(t)-1] = '\0';
 }
 
-void warning_log(char *msg) {
+static void write_log(const char *msg, const char *level) {
   FILE *fp = open_log_file();
+  char c_time[TIME_CHAR];
   if (fp == NULL) {
     return;
   }
-  get_current_time();
-  fprintf(fp, "%s:WARNING: %s\n",cur_time, msg);
+  get_current_time(c_time);
+  fprintf(fp, "%s::%s::%s\n", c_time, level, msg);
   fclose(fp);
 }
 
-void error_log(char *msg) {
-  FILE *fp = open_log_file();
-  if (fp == NULL) {
-    return;
-  }
-  get_current_time();
-  fprintf(fp, "%s:ERROR: %s\n",cur_time, msg);
-  fclose(fp);
+void warning_log(const char *msg) {
+  write_log(msg, "WARNING");
 }
 
-void debug_log(char *msg) {
-  FILE *fp = open_log_file();
-  if (fp == NULL) {
-    return;
-  }
-  get_current_time();
-  fprintf(fp, "%s:DEBUG: %s\n",cur_time, msg);
-  fclose(fp);
+void error_log(const char *msg) {
+  write_log(msg, "ERROR");
 }
 
-void info_log(char *msg) {
-  FILE *fp = open_log_file();
-  if (fp == NULL) {
-    return;
-  }
-  get_current_time();
-  fprintf(fp, "%s:INFO: %s\n",cur_time, msg);
-  fclose(fp);
+void debug_log(const char *msg) {
+  write_log(msg, "DEBUG");
+}
+
+void info_log(const char *msg) {
+  write_log(msg, "INFO");
+}
+
+void custom_log(const char *msg, const char *level) {
+  write_log(msg, level);
 }
 

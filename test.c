@@ -6,4 +6,5 @@ int main(void) {
   warning_log("This is erorr warning string");
   //debug_log("This is error debug string");
   info_log("This is error info log");
+  custom_log("This is custom log with my level", "MYLEVEL");
 }
