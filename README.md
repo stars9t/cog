@@ -11,14 +11,31 @@ int main(void) {
 }
 ```
 After that, you can use 4 levels of logging or use a custom.
+You can also enable a certain level of logging. In this case, all messages below the enabled will not be recorded in the logs.
+After comments it is indicated which logs will be recorded
+
+```
+int main(void) {
+  set_log_level(WARNING); // WARNING
+  set_log_level(ERROR); // WARNING, ERROR
+  set_log_level(INFO); // WARNING, ERROR, INFO
+}
+```
+You can also enable logs for the debug level(They are disabled by default).
+```
+int main(void) {
+  set_debug_mode(); // Enable DEBUG level
+}
+```
+Small examples of how you can keep logs:
 ```
 int main(void) {
   set_log_file("logs.log");
-  warning_log("Warning message");
-  error_log("Error message");
-  debug_log("Debug message");
+  warning_log("Please %s the programm", "restart");
+  error_log("1 != %d", 6);
+  debug_log("Array ended");
   info_log("Info message");
-  custom_log("Custom message", "CUSTOMLEVEL");
+  custom_log("MYLVL", "%d^2 = %d", 7, 49);
 }
 ```
 
