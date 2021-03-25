@@ -5,9 +5,19 @@
 
 // Standard file for logging 
 static const char* log_file = "log.log";
+static int debug_mode = 0;
+static enum LogLevel level = INFO_LEVEL;
 
 void set_log_file(const char *fname) {
   log_file = fname;
+}
+
+void set_debug_mode() {
+  debug_mode = 1;
+}
+
+void set_log_level(enum LogLevel l) {
+  level = l;
 }
 
 static FILE *open_log_file(void) { 
@@ -37,19 +47,27 @@ static void write_log(const char *msg, const char *level) {
 }
 
 void warning_log(const char *msg) {
-  write_log(msg, "WARNING");
+  if (level <= WARNING_LEVEL) {
+    write_log(msg, "WARNING");
+  }
 }
 
 void error_log(const char *msg) {
-  write_log(msg, "ERROR");
+  if (level <= ERROR_LEVEL) {
+    write_log(msg, "ERROR");
+  }
 }
 
 void debug_log(const char *msg) {
-  write_log(msg, "DEBUG");
+  if (debug_mode == 1) {
+    write_log(msg, "DEBUG");
+  }
 }
 
 void info_log(const char *msg) {
-  write_log(msg, "INFO");
+  if (level <= INFO_LEVEL) {
+    write_log(msg, "INFO");
+  }
 }
 
 void custom_log(const char *msg, const char *level) {
