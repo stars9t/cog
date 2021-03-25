@@ -6,6 +6,7 @@
   - [x] custom levels
 - [x] Add logging for files
 - [ ] Add logging for terminal (realtime logging)
+- [x] Additional arguments
 - [x] Add DEBUG mode
 - [x] Add leveling
 

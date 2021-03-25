@@ -4,7 +4,7 @@
 #define TIME_CHAR 26
 
 // Standard file for logging 
-static const char* log_file = "log.log";
+static const char* log_file = "logs.log";
 static int debug_mode = 0;
 static enum LogLevel level = INFO_LEVEL;
 
@@ -35,42 +35,68 @@ static void get_current_time(char *t) {
   t[strlen(t)-1] = '\0';
 }
 
-static void write_log(const char *msg, const char *level) {
-  FILE *fp = open_log_file();
+static void write_log(const char *level, const char *msg, va_list args) {
+  FILE *fp;
   char c_time[TIME_CHAR];
-  if (fp == NULL) {
+
+  if ((fp = open_log_file()) == NULL) {
     return;
   }
+
   get_current_time(c_time);
-  fprintf(fp, "%s::%s::%s\n", c_time, level, msg);
+
+  fprintf(fp, "%s::%s::", c_time, level);
+  vfprintf(fp, msg, args);
+  fprintf(fp, "\n");
+
   fclose(fp);
 }
 
-void warning_log(const char *msg) {
+void warning_log(const char *msg, ...) {
+  va_list args;
+
   if (level <= WARNING_LEVEL) {
-    write_log(msg, "WARNING");
+    va_start(args, msg);
+    va_end(args);
+    write_log("WARNING", msg, args);
   }
 }
 
-void error_log(const char *msg) {
+void error_log(const char *msg, ...) {
+  va_list args;
+
   if (level <= ERROR_LEVEL) {
-    write_log(msg, "ERROR");
+    va_start(args, msg);
+    va_end(args);
+    write_log("ERROR", msg, args);
   }
 }
 
-void debug_log(const char *msg) {
+void debug_log(const char *msg, ...) {
+  va_list args;
+
   if (debug_mode == 1) {
-    write_log(msg, "DEBUG");
+    va_start(args, msg);
+    va_end(args);
+    write_log("DEBUG", msg, args);
   }
 }
 
-void info_log(const char *msg) {
+void info_log(const char *msg, ...) {
+  va_list args;
+
   if (level <= INFO_LEVEL) {
-    write_log(msg, "INFO");
+    va_start(args, msg);
+    va_end(args);
+    write_log("INFO", msg, args);
   }
 }
 
-void custom_log(const char *msg, const char *level) {
-  write_log(msg, level);
+void custom_log(const char *level, const char *msg, ...) {
+  va_list args;
+  va_start(args, msg);
+  va_end(args);
+
+  write_log(level, msg, args);
 }
 
