@@ -4,10 +4,20 @@
 #define TIME_CHAR 26
 
 // Standard file for logging 
-static const char* log_file = "log.log";
+static const char* log_file = "logs.log";
+static int debug_mode = 0;
+static enum LogLevel level = INFO_LEVEL;
 
 void set_log_file(const char *fname) {
   log_file = fname;
+}
+
+void set_debug_mode() {
+  debug_mode = 1;
+}
+
+void set_log_level(enum LogLevel l) {
+  level = l;
 }
 
 static FILE *open_log_file(void) { 
@@ -25,34 +35,68 @@ static void get_current_time(char *t) {
   t[strlen(t)-1] = '\0';
 }
 
-static void write_log(const char *msg, const char *level) {
-  FILE *fp = open_log_file();
+static void write_log(const char *level, const char *msg, va_list args) {
+  FILE *fp;
   char c_time[TIME_CHAR];
-  if (fp == NULL) {
+
+  if ((fp = open_log_file()) == NULL) {
     return;
   }
+
   get_current_time(c_time);
-  fprintf(fp, "%s::%s::%s\n", c_time, level, msg);
+
+  fprintf(fp, "%s::%s::", c_time, level);
+  vfprintf(fp, msg, args);
+  fprintf(fp, "\n");
+
   fclose(fp);
 }
 
-void warning_log(const char *msg) {
-  write_log(msg, "WARNING");
+void warning_log(const char *msg, ...) {
+  va_list args;
+
+  if (level <= WARNING_LEVEL) {
+    va_start(args, msg);
+    va_end(args);
+    write_log("WARNING", msg, args);
+  }
 }
 
-void error_log(const char *msg) {
-  write_log(msg, "ERROR");
+void error_log(const char *msg, ...) {
+  va_list args;
+
+  if (level <= ERROR_LEVEL) {
+    va_start(args, msg);
+    va_end(args);
+    write_log("ERROR", msg, args);
+  }
 }
 
-void debug_log(const char *msg) {
-  write_log(msg, "DEBUG");
+void debug_log(const char *msg, ...) {
+  va_list args;
+
+  if (debug_mode == 1) {
+    va_start(args, msg);
+    va_end(args);
+    write_log("DEBUG", msg, args);
+  }
 }
 
-void info_log(const char *msg) {
-  write_log(msg, "INFO");
+void info_log(const char *msg, ...) {
+  va_list args;
+
+  if (level <= INFO_LEVEL) {
+    va_start(args, msg);
+    va_end(args);
+    write_log("INFO", msg, args);
+  }
 }
 
-void custom_log(const char *msg, const char *level) {
-  write_log(msg, level);
+void custom_log(const char *level, const char *msg, ...) {
+  va_list args;
+  va_start(args, msg);
+  va_end(args);
+
+  write_log(level, msg, args);
 }
 
