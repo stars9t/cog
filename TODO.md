@@ -7,11 +7,12 @@
 - [x] Add logging for files
 - [x] Add logging for terminal (realtime logging)
 - [ ] Add colloring logging
-- [-] Prettify time message
+- [x] Prettify time message
 - [ ] FILE and LINE logging
 - [x] Additional arguments
 - [x] Add DEBUG mode
 - [x] Add level locking
+- [ ] Refactoring logging and custom log
 
 [ ] - task
 [-] - task in process

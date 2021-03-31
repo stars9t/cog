@@ -1,7 +1,7 @@
 #include "cog.h"
 
 // Length of the string at which the time is written
-#define TIME_CHAR 26
+#define TIME_SYM 21
 
 // Standard file for logging 
 static const char *log_file = "logs.log";
@@ -50,15 +50,14 @@ static FILE *open_log_file(void) {
   return fp;
 }
 
-static void get_current_time(char *t) {
-  time_t current_time = time(0);
-  strcpy(t,ctime(&current_time));
-  t[strlen(t)-1] = '\0';
+static void get_current_time(char *arr) {
+  time_t t = time(0);
+  strftime(arr, TIME_SYM, "%F::%T", localtime(&t));
 }
 
 static void write_file_log(const char *level, const char *msg, va_list args) {
   FILE *fp;
-  char c_time[TIME_CHAR];
+  char c_time[TIME_SYM];
 
   if ((fp = open_log_file()) == NULL) {
     return;
@@ -74,7 +73,7 @@ static void write_file_log(const char *level, const char *msg, va_list args) {
 }
 
 static void write_terminal_log(const char *level, const char *msg, va_list args) {
-  char c_time[TIME_CHAR];
+  char c_time[TIME_SYM];
 
   get_current_time(c_time);
   printf("%s::%s::", c_time, level);
@@ -82,34 +81,40 @@ static void write_terminal_log(const char *level, const char *msg, va_list args)
   printf("\n");
 }
 
+// TODO refactoring logging
 void logging(int level, const char *msg, ...) {
   va_list args;
 
   if (level >= current_level || level == DEBUG_LEVEL & debug_mode == 1) {
-    va_start(args, msg);
 
     if (log_scope >= 1 & log_scope != 2) {
+      va_start(args, msg);
       write_file_log(levels_str[level], msg, args);
+      va_end(args);
     } 
     if (log_scope >= 2) {
+      va_start(args, msg);
       write_terminal_log(levels_str[level], msg, args);
+      va_end(args);
     }
-
-    va_end(args);
   }
 }
 
+// TODO refactoring custom log
 void custom_log(const char *level, const char *msg, ...) {
   va_list args;
-  va_start(args, msg);
 
   if (log_scope >= 1 & log_scope != 2) {
+    va_start(args, msg);
     write_file_log(level, msg, args);
+    va_end(args);
   } 
+
   if (log_scope >= 2) {
+    va_start(args, msg);
     write_terminal_log(level, msg, args);
+    va_end(args);
   }
 
-  va_end(args);
 }
 
