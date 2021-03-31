@@ -2,7 +2,7 @@
 
 int main(void) {
   set_log_file("log");
-  set_log_level(WARNING_LEVEL); 
+  set_log_level(INFO_LEVEL); 
   set_debug_mode();
   error_log("You must %s the program", "restart");
   warning_log("Oh no! 1 != %d", 5);

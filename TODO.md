@@ -6,9 +6,12 @@
   - [x] custom levels
 - [x] Add logging for files
 - [ ] Add logging for terminal (realtime logging)
+- [ ] Add colloring logging
+- [ ] Prettify time message
+- [ ] FILE and LINE logging
 - [x] Additional arguments
 - [x] Add DEBUG mode
-- [x] Add leveling
+- [x] Add level locking
 
 [ ] - task
 [-] - task in process
