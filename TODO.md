@@ -5,9 +5,9 @@
   - [x] info log
   - [x] custom levels
 - [x] Add logging for files
-- [ ] Add logging for terminal (realtime logging)
+- [x] Add logging for terminal (realtime logging)
 - [ ] Add colloring logging
-- [ ] Prettify time message
+- [-] Prettify time message
 - [ ] FILE and LINE logging
 - [x] Additional arguments
 - [x] Add DEBUG mode

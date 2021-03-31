@@ -19,6 +19,7 @@ enum LogLevel {
 void set_log_file(const char *fname);
 void set_debug_mode(void);
 void set_log_level(enum LogLevel l);
+void set_log_scope(int i);
 
 void logging(int level, const char *msg, ...);
 void custom_log(const char *level, const char *msg, ...);

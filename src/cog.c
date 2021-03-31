@@ -14,6 +14,12 @@ static const char *levels_str[] = {
   "DEBUG", "INFO", "WARNING", "ERROR"
 };
 
+// 0 = not write logs
+// 1 = write in the file
+// 2 = write in the terminal
+// 3 = write to file and terminal
+static int log_scope = 1;
+
 void set_log_file(const char *fname) {
   log_file = fname;
 }
@@ -24,6 +30,15 @@ void set_debug_mode() {
 
 void set_log_level(enum LogLevel l) {
   current_level = l;
+}
+
+void set_log_scope(int i) {
+  if (i < 0 || i > 3) {
+    printf("You set the wrong value. log_scope can be from 0 to 3");
+    log_scope = 1;
+  } else {
+    log_scope = i;
+  }
 }
 
 static FILE *open_log_file(void) { 
@@ -41,7 +56,7 @@ static void get_current_time(char *t) {
   t[strlen(t)-1] = '\0';
 }
 
-static void write_log(const char *level, const char *msg, va_list args) {
+static void write_file_log(const char *level, const char *msg, va_list args) {
   FILE *fp;
   char c_time[TIME_CHAR];
 
@@ -58,12 +73,28 @@ static void write_log(const char *level, const char *msg, va_list args) {
   fclose(fp);
 }
 
+static void write_terminal_log(const char *level, const char *msg, va_list args) {
+  char c_time[TIME_CHAR];
+
+  get_current_time(c_time);
+  printf("%s::%s::", c_time, level);
+  vprintf(msg, args);
+  printf("\n");
+}
+
 void logging(int level, const char *msg, ...) {
   va_list args;
 
   if (level >= current_level || level == DEBUG_LEVEL & debug_mode == 1) {
     va_start(args, msg);
-    write_log(levels_str[level], msg, args);
+
+    if (log_scope >= 1 & log_scope != 2) {
+      write_file_log(levels_str[level], msg, args);
+    } 
+    if (log_scope >= 2) {
+      write_terminal_log(levels_str[level], msg, args);
+    }
+
     va_end(args);
   }
 }
@@ -71,7 +102,14 @@ void logging(int level, const char *msg, ...) {
 void custom_log(const char *level, const char *msg, ...) {
   va_list args;
   va_start(args, msg);
-  write_log(level, msg, args);
+
+  if (log_scope >= 1 & log_scope != 2) {
+    write_file_log(level, msg, args);
+  } 
+  if (log_scope >= 2) {
+    write_terminal_log(level, msg, args);
+  }
+
   va_end(args);
 }
 
