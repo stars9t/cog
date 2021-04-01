@@ -8,18 +8,25 @@ enum LogLevel {
   DEBUG_LEVEL,
   INFO_LEVEL,
   WARNING_LEVEL,
-  ERROR_LEVEL
+  ERROR_LEVEL,
 };
 
-#define warning_log(...) logging(WARNING_LEVEL, __VA_ARGS__)
-#define error_log(...) logging(ERROR_LEVEL, __VA_ARGS__)
-#define debug_log(...) logging(DEBUG_LEVEL, __VA_ARGS__)
-#define info_log(...) logging(INFO_LEVEL, __VA_ARGS__)
+enum LogPlace {
+  TERMINAL_PLACE,
+  FILE_PLACE,
+  ANY_PLACE
+};
+
+#define warning_log(...) standard_log(WARNING_LEVEL, __VA_ARGS__)
+#define error_log(...) standard_log(ERROR_LEVEL, __VA_ARGS__)
+#define debug_log(...) standard_log(DEBUG_LEVEL, __VA_ARGS__)
+#define info_log(...) standard_log(INFO_LEVEL, __VA_ARGS__)
 
 void set_log_file(const char *fname);
 void set_debug_mode(void);
 void set_log_level(enum LogLevel l);
-void set_log_scope(int i);
+void set_log_place(enum LogPlace p);
+void disable_logging();
 
-void logging(int level, const char *msg, ...);
+void standard_log(enum LogLevel level, const char *msg, ...);
 void custom_log(const char *level, const char *msg, ...);

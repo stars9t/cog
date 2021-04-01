@@ -40,13 +40,13 @@ int main(void) {
 }
 ```
 
-After adding new feature, you can use the log scope, which allows you to determine where the log will be written.
+After adding new feature, you can use the log scope, which allows you to determine where the log will be written. You can also disable logging.
 ```
 int main(void) {
-  // 0 = not write the log
-  // 1 = write log in file
-  // 2 = write log in terminal
-  // 3 = write log to terminal and file
-  set_log_scope(3);
+  // FILE_PLACE, TERMINAL_PLACE, ANY_PLACE
+  // FILE_PLACE as default
+  set_log_place(ANY_PLACE)
+
+  disable_logging();
 }
 ```

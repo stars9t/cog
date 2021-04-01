@@ -2,9 +2,8 @@
 
 int main(void) {
   set_log_file("log");
-  set_log_level(INFO_LEVEL); 
-  set_debug_mode();
-  set_log_scope(3);
+  set_log_level(WARNING_LEVEL); 
+  set_log_place(TERMINAL_PLACE);
   error_log("You must %s the program", "restart");
   warning_log("Oh no! 1 != %d", 5);
   debug_log("4*4 = %d", 4*4);

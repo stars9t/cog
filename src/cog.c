@@ -10,36 +10,14 @@ static int debug_mode = 0;
 
 static enum LogLevel current_level = INFO_LEVEL;
 
-static const char *levels_str[] = {
+// Write logs or not
+static int is_log_allow = 1;
+
+static enum LogPlace log_place = FILE_PLACE;
+
+static const char *str_lvl[] = {
   "DEBUG", "INFO", "WARNING", "ERROR"
 };
-
-// 0 = not write logs
-// 1 = write in the file
-// 2 = write in the terminal
-// 3 = write to file and terminal
-static int log_scope = 1;
-
-void set_log_file(const char *fname) {
-  log_file = fname;
-}
-
-void set_debug_mode() {
-  debug_mode = 1;
-}
-
-void set_log_level(enum LogLevel l) {
-  current_level = l;
-}
-
-void set_log_scope(int i) {
-  if (i < 0 || i > 3) {
-    printf("You set the wrong value. log_scope can be from 0 to 3");
-    log_scope = 1;
-  } else {
-    log_scope = i;
-  }
-}
 
 static FILE *open_log_file(void) { 
   FILE *fp;
@@ -81,40 +59,54 @@ static void write_terminal_log(const char *level, const char *msg, va_list args)
   printf("\n");
 }
 
-// TODO refactoring logging
-void logging(int level, const char *msg, ...) {
-  va_list args;
+static void write_log(enum LogPlace lp, const char *lvl, const char *msg, va_list args) {
+  va_list args_c;
 
-  if (level >= current_level || level == DEBUG_LEVEL & debug_mode == 1) {
+  if (!is_log_allow) {
+    return;
+  }
 
-    if (log_scope >= 1 & log_scope != 2) {
-      va_start(args, msg);
-      write_file_log(levels_str[level], msg, args);
-      va_end(args);
-    } 
-    if (log_scope >= 2) {
-      va_start(args, msg);
-      write_terminal_log(levels_str[level], msg, args);
-      va_end(args);
-    }
+  va_copy(args_c, args);
+  if (lp == FILE_PLACE || lp == ANY_PLACE) {
+    write_file_log(lvl, msg, args);
+  } 
+  if (lp == TERMINAL_PLACE || lp == ANY_PLACE) {
+    write_terminal_log(lvl, msg, args_c);
   }
 }
 
-// TODO refactoring custom log
+void set_log_file(const char *fname) {
+  log_file = fname;
+}
+
+void set_debug_mode() {
+  debug_mode = 1;
+}
+
+void set_log_level(enum LogLevel l) {
+  current_level = l;
+}
+
+void set_log_place(enum LogPlace p) {
+  log_place = p;
+}
+
+void disable_logging() {
+  is_log_allow = 0;
+}
+
+void standard_log(enum LogLevel level, const char *msg, ...) {
+  va_list args;
+  if (level >= current_level || level == DEBUG_LEVEL && debug_mode == 1) {
+    va_start(args, msg);
+    write_log(log_place, str_lvl[level], msg, args);
+    va_end(args);
+  }
+}
+
 void custom_log(const char *level, const char *msg, ...) {
   va_list args;
-
-  if (log_scope >= 1 & log_scope != 2) {
-    va_start(args, msg);
-    write_file_log(level, msg, args);
-    va_end(args);
-  } 
-
-  if (log_scope >= 2) {
-    va_start(args, msg);
-    write_terminal_log(level, msg, args);
-    va_end(args);
-  }
-
+  va_start(args, msg);
+  write_log(log_place, level, msg, args);
+  va_end(args);
 }
-
