@@ -54,9 +54,9 @@ static void write_terminal_log(const char *level, const char *msg, va_list args)
   char c_time[TIME_SYM];
 
   get_current_time(c_time);
-  printf("%s::%s::", c_time, level);
-  vprintf(msg, args);
-  printf("\n");
+  fprintf(stderr, "%s::%s::", c_time, level);
+  vfprintf(stderr, msg, args);
+  fprintf(stderr, "\n");
 }
 
 static void write_log(enum LogPlace lp, const char *lvl, const char *msg, va_list args) {
